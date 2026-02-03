@@ -5,7 +5,7 @@ import re
 import json
 from pathlib import Path
 from datetime import datetime
-from urllib.parse import urlparse, urlunparse, parse_qs
+from urllib.parse import urlparse, urlunparse, urlencode, parse_qs
 from functools import lru_cache
 from typing import Dict, Any, List, Tuple, Optional
 
