@@ -54,6 +54,3 @@ Every action is logged, every session is tracked, and every tool is isolated.
 ## 📦 Installation
 
 Synchestra is designed to run inside OpenWebUI as a Python tool.
-
-Place the `tools.py` file inside:
-
