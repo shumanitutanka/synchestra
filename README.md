@@ -50,6 +50,7 @@ Every action is logged, every session is tracked, and every tool is isolated.
 - Session history  
 
 ---
+![Release](https://img.shields.io/badge/release-v0.1.0-blue)
 
 ## 📦 Installation
 
