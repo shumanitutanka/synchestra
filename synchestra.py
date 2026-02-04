@@ -39,6 +39,9 @@ class Tools:
         self.LOG_PATH = Path("/app/backend/data/synchestra.log")
         self.STATE_PATH = Path("/app/backend/data/synchestra_state.json")
 
+        # Path per i files 
+        self.KB_PATH = None
+
         # Embedding model (lazy load)
         self._EMB_MODEL = None
         self._util = None
@@ -972,7 +975,15 @@ class Tools:
 
         session = self._get_session(session_id, chat_id)
 
-        base = Path("/app/backend/data/uploads")
+
+        # Se l’utente/test ha impostato KB_PATH, usalo
+        if self.KB_PATH is not None:
+            base = Path(self.KB_PATH)
+        else:
+        # fallback: directory reale del progetto
+            project_root = Path(__file__).resolve().parent
+            base = project_root / "data" / "uploads"
+
 
         documents: List[Dict[str, Any]] = []
         filenames: List[str] = []

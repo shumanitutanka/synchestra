@@ -33,3 +33,20 @@ def tools(tmp_path, monkeypatch):
     t._util = None
 
     return t
+
+@pytest.fixture
+def tools_semantic(tmp_path):
+    t = Tools()
+
+    base = tmp_path / "synchestra_data"
+    base.mkdir(parents=True, exist_ok=True)
+
+    t.LOG_PATH = base / "synchestra.log"
+    t.STATE_PATH = base / "synchestra_state.json"
+
+    # NON disattivare la semantica
+    t._lazy_load_embeddings()
+    assert t._EMB_MODEL is not None
+
+    return t
+
