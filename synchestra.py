@@ -33,13 +33,13 @@ class Tools:
         self.trace: List[Dict[str, Any]] = []
 
         # Debug mode
-        self.debug: bool = True
+        self.debug: bool = False
 
         # Logging su file
         self.LOG_PATH = Path("/app/backend/data/synchestra.log")
         self.STATE_PATH = Path("/app/backend/data/synchestra_state.json")
 
-        # Path per i files 
+        # Path per i files
         self.KB_PATH = None
 
         # Embedding model (lazy load)
@@ -76,25 +76,51 @@ class Tools:
     # STATO
     # -------------------------------------------------------------------------
 
+    def _clean_state(self, state):
+        for sid, session in state.get("sessions", {}).items():
+            history = session.get("history", [])
+
+            for entry in history:
+                if not isinstance(entry, dict):
+                    continue
+
+                # Rimuovi embeddings nei risultati
+                if "results" in entry:
+                    for item in entry["results"]:
+                        item.pop("embedding", None)
+
+                # Rimuovi embeddings nei cluster
+                if "clusters" in entry:
+                    for cluster in entry["clusters"]:
+                        # rimuovi centroidi numpy
+                        cluster.pop("centroid", None)
+
+                        # rimuovi embeddings dagli items
+                        for item in cluster.get("items", []):
+                            item.pop("embedding", None)
+
+        return state
+
     def _save_state_to_disk(self):
         try:
-            import json
-
-            self.STATE_PATH.parent.mkdir(parents=True, exist_ok=True)
+            safe_state = self._clean_state(self.state)
             with self.STATE_PATH.open("w") as f:
-                json.dump(self.state, f)
+                json.dump(safe_state, f)
         except Exception as e:
             print(f"[SYNCHESTRA_STATE_SAVE_ERROR] {e}")
 
     def _load_state_from_disk(self):
         try:
-            import json
-
             if self.STATE_PATH.exists():
                 with self.STATE_PATH.open("r") as f:
                     self.state = json.load(f)
         except Exception as e:
             print(f"[SYNCHESTRA_STATE_LOAD_ERROR] {e}")
+            # stato di fallback pulito
+            self.state = {
+                "sessions": {},
+                "last_session_id": None,
+            }
 
     # -------------------------------------------------------------------------
     # NORMALIZZAZIONE E SEMANTICA
@@ -331,9 +357,6 @@ class Tools:
 
         self._log("ORCHESTRATOR_CORE_DISPATCH", result)
         self._save_state_to_disk()
-
-        if self.debug:
-            return {"debug": "Core dispatch prepared.", "result": result}
 
         return result
 
@@ -975,15 +998,13 @@ class Tools:
 
         session = self._get_session(session_id, chat_id)
 
-
         # Se l’utente/test ha impostato KB_PATH, usalo
         if self.KB_PATH is not None:
             base = Path(self.KB_PATH)
         else:
-        # fallback: directory reale del progetto
+            # fallback: directory reale del progetto
             project_root = Path(__file__).resolve().parent
             base = project_root / "data" / "uploads"
-
 
         documents: List[Dict[str, Any]] = []
         filenames: List[str] = []
@@ -1243,3 +1264,4 @@ class Tools:
         self._save_state_to_disk()
         self._log("STATE_RESET", {"info": "State and trace cleared."})
         return {"status": "ok", "message": "Synchestra state and trace reset."}
+
