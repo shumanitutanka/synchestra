@@ -45,33 +45,6 @@ Synchestra v1.0.0 is the first **official stable release**, replacing the earlie
 
 ---
 
-## 📁 Project Structure
-
-synchestra/
-│
-├── app.py                 # HTTP server (FastAPI)
-├── supervisor.py          # Tool routing + session management
-├── state.py               # Session state handling
-├── tools/                 # All modular tools
-│   ├── patent_google.py
-│   ├── patent_uspto.py
-│   ├── patent_wipo.py
-│   ├── patent_universal.py
-│   ├── search.py
-│   ├── rag.py
-│   ├── summarize.py
-│   ├── analysis.py
-│   ├── postprocess.py
-│   └── loader/
-│       ├── dynamic_loader.py
-│       ├── static_loader.py
-│       └── universal_loader.py
-│
-└── init.py
-
-
----
-
 ## 🚀 Running Synchestra (Standalone Mode)
 
 Install dependencies:
