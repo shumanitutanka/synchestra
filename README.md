@@ -131,8 +131,3 @@ json
     No hidden behavior, no implicit state.
 
     Stability over cleverness  
-    Patent routing uses the most reliable backend (Google Patents).
-
-📄 License
-
-MIT License 2026 Alessandro Paradiso
